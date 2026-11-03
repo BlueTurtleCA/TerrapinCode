@@ -15,6 +15,9 @@ public actor SessionStore {
     // the conversation when the machine goes offline or the connection is
     // restored.
     private var networkStates: [String: Bool] = [:]
+    // The context window the agent believes the model has, recorded per
+    // session so the persisted file shows what compaction was tuned to.
+    private var contextWindows: [String: Int] = [:]
     private let sessionsDirectory: URL
     private let logger: Loggable
     
@@ -86,6 +89,17 @@ public actor SessionStore {
         persist(sessionId)
     }
     
+    // The context window the agent believes the model has, so the persisted
+    // session records the basis for its compaction threshold.
+    public func contextWindow(for sessionId: String) -> Int? {
+        return contextWindows[sessionId]
+    }
+    
+    public func setContextWindow(_ window: Int, for sessionId: String) {
+        contextWindows[sessionId] = window
+        persist(sessionId)
+    }
+    
     // Get chat history or fallback to standard system prompt
     public func getHistory(for sessionId: String, defaultSystemPrompt: String) -> [ChatMessage] {
         return histories[sessionId] ?? [
@@ -118,6 +132,9 @@ public actor SessionStore {
         }
         if let state = record.networkState {
             networkStates[sessionId] = state
+        }
+        if let window = record.contextWindow {
+            contextWindows[sessionId] = window
         }
         histories[sessionId] = record.history
         return true
@@ -159,6 +176,7 @@ public actor SessionStore {
         workingDirs[sessionId] = nil
         histories[sessionId] = nil
         networkStates[sessionId] = nil
+        contextWindows[sessionId] = nil
         do {
             try FileManager.default.removeItem(at: fileURL(for: sessionId))
         } catch let error as NSError where
@@ -178,6 +196,7 @@ public actor SessionStore {
         var cwd: String?
         var history: [ChatMessage]
         var networkState: Bool?
+        var contextWindow: Int?
     }
 
     /// File for a session. Session IDs are normally UUIDs, but clients may
@@ -196,7 +215,8 @@ public actor SessionStore {
         let record = SessionRecord(
             cwd: workingDirs[sessionId],
             history: histories[sessionId] ?? [],
-            networkState: networkStates[sessionId]
+            networkState: networkStates[sessionId],
+            contextWindow: contextWindows[sessionId]
         )
         do {
             try FileManager.default.createDirectory(

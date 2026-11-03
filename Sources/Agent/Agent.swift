@@ -74,6 +74,19 @@ public struct Agent: Sendable {
             return
         }
 
+        // /compact: manually compact the session's history, bypassing the
+        // token threshold, for sessions that are growing but not yet over
+        // the limit.
+        if Self.isCompactCommand(prompt) {
+            await runManualCompaction(
+                sessionId: sessionId,
+                supportsCompaction: supportsCompaction,
+                onChunk: onChunk,
+                onSendJSON: onSendJSON
+            )
+            return
+        }
+
         // Check connectivity before building the prompt so a session that
         // starts offline gets the warning in its system prompt.
         let online = await networkMonitor.isOnline
@@ -99,6 +112,12 @@ public struct Agent: Sendable {
             await sessionStore.setNetworkState(online, for: sessionId)
         }
 
+        // Record what we believe the context window to be so the persisted
+        // session shows the basis for the compaction threshold.
+        if await sessionStore.contextWindow(for: sessionId) != contextWindow {
+            await sessionStore.setContextWindow(contextWindow, for: sessionId)
+        }
+
         history.append(ChatMessage(role: "user", content: prompt))
 
         // Pin this session to a stable server slot so the backend (llama.cpp)
@@ -121,8 +140,17 @@ public struct Agent: Sendable {
             // Compact history if approaching context window limit, and tell
             // the client when it happens (it is otherwise invisible).
             let compaction = ContextManager.compactHistory(history, maxTokens: contextWindow)
+            let usagePercent = contextWindow > 0
+                ? Double(compaction.tokensBefore) / Double(contextWindow) * 100
+                : 0
+            logger.debug(
+                "Context: \(compaction.tokensBefore)/\(contextWindow) estimated tokens (\(String(format: "%.1f", usagePercent))%) — session \(sessionId)"
+            )
             history = compaction.messages
             if compaction.compacted {
+                logger.debug(
+                    "Compacted history: removed \(compaction.messagesRemoved) messages (\(compaction.tokensBefore) -> \(compaction.tokensAfter) estimated tokens) — session \(sessionId)"
+                )
                 reportCompaction(
                     compaction,
                     sessionId: sessionId,
@@ -332,6 +360,66 @@ public struct Agent: Sendable {
     private static func formatTokens(_ tokens: Int) -> String {
         guard tokens >= 1000 else { return "\(tokens)" }
         return String(format: "%.1fk", Double(tokens) / 1000)
+    }
+
+    // MARK: - Manual Compaction
+
+    /// Returns true when the prompt is the /compact command, which manually
+    /// compacts the session's history regardless of the token threshold.
+    private static func isCompactCommand(_ prompt: String) -> Bool {
+        guard let last = prompt.split(whereSeparator: \.isNewline).last else { return false }
+        return last.trimmingCharacters(in: .whitespacesAndNewlines) == "/compact"
+    }
+
+    /// Compacts the session's history on demand (/compact) and reports the
+    /// outcome to the client. Unlike the automatic path, the token threshold
+    /// is bypassed so a session that is growing but not yet over the limit
+    /// can still be trimmed.
+    private func runManualCompaction(
+        sessionId: String,
+        supportsCompaction: Bool,
+        onChunk: @escaping @Sendable (String) -> Void,
+        onSendJSON: @escaping @Sendable ([String: Any]) -> Void
+    ) async {
+        guard
+            let history = await sessionStore.history(for: sessionId),
+            !history.isEmpty
+        else {
+            onChunk("ℹ️ /compact: no conversation to compact yet.")
+            return
+        }
+
+        let compaction = ContextManager.compactHistory(
+            history,
+            maxTokens: contextWindow,
+            force: true
+        )
+        logger.debug(
+            "/compact: \(compaction.tokensBefore) estimated tokens, compacted=\(compaction.compacted), removed=\(compaction.messagesRemoved) — session \(sessionId)"
+        )
+
+        guard compaction.compacted else {
+            onChunk(
+                "ℹ️ /compact: only \(history.count) messages in the conversation; nothing to compact."
+            )
+            return
+        }
+
+        guard compaction.messagesRemoved > 0 else {
+            onChunk(
+                "ℹ️ /compact: the conversation already fits within the keep budget (\(Self.formatTokens(compaction.tokensAfter)) estimated tokens); nothing was dropped."
+            )
+            return
+        }
+
+        await sessionStore.saveHistory(compaction.messages, for: sessionId)
+        reportCompaction(
+            compaction,
+            sessionId: sessionId,
+            supportsCompaction: supportsCompaction,
+            onChunk: onChunk,
+            onSendJSON: onSendJSON
+        )
     }
 
     // MARK: - Debug Replay

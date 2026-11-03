@@ -117,6 +117,27 @@ struct CompactHistoryTests {
         expectSameMessages(result.messages, history)
     }
 
+    @Test func forceCompactsBelowThreshold() {
+        let history = (0..<8).map { i in
+            message(i.isMultiple(of: 2) ? "user" : "assistant", chars: 350) // 100 tokens each
+        }
+        // 800 tokens, under the 900 limit, but force bypasses the threshold
+        let result = ContextManager.compactHistory(history, maxTokens: 1000, force: true)
+
+        #expect(result.compacted)
+        #expect(result.tokensBefore == 800)
+        // keepBudget is 500 tokens, so the five most recent messages fit
+        #expect(result.messagesKept == 5)
+        #expect(result.messagesRemoved == 3)
+    }
+
+    @Test func forceStillRequiresMoreThanFourMessages() {
+        let history = (0..<4).map { _ in message("user", chars: 3500) }
+        let result = ContextManager.compactHistory(history, maxTokens: 1000, force: true)
+        #expect(!result.compacted)
+        expectSameMessages(result.messages, history)
+    }
+
     @Test func compactionKeepsSystemMessageAndNoticePair() {
         let history = [
             message("system", chars: 350),     // 100 tokens

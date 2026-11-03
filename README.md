@@ -179,6 +179,10 @@ To replay raw JSON to the ACP client without involving the model, send `/debug <
 }
 ```
 
+### `/compact` command
+
+To compact a session's history on demand, send `/compact` as a prompt. Automatic compaction only fires when the estimated token count exceeds 90% of the context window; `/compact` bypasses that threshold and trims the conversation down to the most recent messages that fit within half the window. The outcome is reported through the usual compaction notifications, and the compacted history is saved to the session.
+
 ## Project structure
 
 ```

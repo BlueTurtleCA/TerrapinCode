@@ -48,13 +48,16 @@ public struct ContextManager {
     public static func compactHistory(
         _ history: [ChatMessage],
         maxTokens: Int = 16384,  // Set to your model's context size (e.g. 8192, 16384, 32768)
-        targetBudgetRatio: Double = 0.90  // Compact when usage exceeds 90% of max context
+        targetBudgetRatio: Double = 0.90,  // Compact when usage exceeds 90% of max context
+        force: Bool = false  // Bypass the token threshold (manual /compact)
     ) -> CompactionResult {
         let currentTokens = estimateTokenCount(history)
         let tokenLimit = Int(Double(maxTokens) * targetBudgetRatio)
 
-        // Return untouched if within context budget
-        guard currentTokens > tokenLimit, history.count > 4 else {
+        // Return untouched if within context budget. A forced compaction
+        // bypasses the token threshold but still needs more than four
+        // messages, since the recent window would keep everything else.
+        guard history.count > 4, force || currentTokens > tokenLimit else {
             return CompactionResult(
                 messages: history,
                 compacted: false,
