@@ -49,6 +49,10 @@ let package = Package(
         .testTarget(
             name: "ToolsTests",
             dependencies: ["Tools"]
+        ),
+        .testTarget(
+            name: "AgentTests",
+            dependencies: ["Agent"]
         )
     ]
 )

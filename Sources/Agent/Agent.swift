@@ -128,7 +128,7 @@ public struct Agent: Sendable {
         // first call and the user's access approval is requested immediately.
         await toolRegistry.prepare(cwd: cwd)
 
-        let maxTurns = 50
+        let maxTurns = 500
         var currentTurn = 0
 
         while currentTurn < maxTurns {
