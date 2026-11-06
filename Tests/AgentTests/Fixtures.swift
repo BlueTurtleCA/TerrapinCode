@@ -1,5 +1,5 @@
 //
-// TerrapinPilot
+// TerrapinCode
 // Copyright (C) 2026 Blue Turtle Corporation
 // Author: David Gill
 // Fixtures.swift
@@ -193,7 +193,7 @@ final class TempDirectory: @unchecked Sendable {
 
     init() {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("terrapinpilot-tests-\(UUID().uuidString)")
+            .appendingPathComponent("terrapincode-tests-\(UUID().uuidString)")
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         self.url = url
     }

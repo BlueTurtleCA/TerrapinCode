@@ -1,5 +1,5 @@
 //
-// TerrapinPilot
+// TerrapinCode
 // Copyright (C) 2026 Blue Turtle Corporation
 // Author: David Gill
 // Config.swift
@@ -18,7 +18,7 @@ struct Config: Sendable {
     /// Sessions are pinned to a slot so the KV cache is reused across turns.
     let slots: Int
     /// When true, each request body sent to the AI server is written to
-    /// ~/.terrapinpilot/logs/NNNN.json for prefix-stability debugging.
+    /// ~/.terrapincode/logs/NNNN.json for prefix-stability debugging.
     let debugLog: Bool
     /// Client assumed when the connecting ACP client does not identify
     /// itself via `clientInfo` in the `initialize` request.

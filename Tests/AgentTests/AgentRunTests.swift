@@ -1,5 +1,5 @@
 //
-// TerrapinPilot
+// TerrapinCode
 // Copyright (C) 2026 Blue Turtle Corporation
 // Author: David Gill
 // AgentRunTests.swift
@@ -169,7 +169,7 @@ struct AgentRunTests {
         #expect(history.last?.content == "ok")
     }
 
-    @Test("the loop stops at fifty turns")
+    @Test("the loop stops at five hundred turns (prevent extreme looping)")
     func maxTurns() async {
         let harness = makeAgentHarness(
             llm: FakeLLMClient(
@@ -183,8 +183,8 @@ struct AgentRunTests {
         let recorder = Recorder()
         await harness.run(prompt: "go", tools: [testToolDefinition("tool_a")], recorder: recorder)
 
-        #expect(harness.llm.callCount == 50)
-        #expect(harness.provider.executions.count == 50)
+        #expect(harness.llm.callCount == 500)
+        #expect(harness.provider.executions.count == 500)
     }
 
     // MARK: - Errors

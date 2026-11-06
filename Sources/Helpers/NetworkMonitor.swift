@@ -1,5 +1,5 @@
 //
-// TerrapinPilot
+// TerrapinCode
 // Copyright (C) 2026 Blue Turtle Corporation
 // Author: David Gill
 // NetworkMonitor.swift
@@ -18,7 +18,7 @@ public actor NetworkMonitor {
     public static let shared = NetworkMonitor()
 
     private let monitor = NWPathMonitor()
-    private let queue = DispatchQueue(label: "com.terrapinpilot.network-monitor")
+    private let queue = DispatchQueue(label: "com.terrapincode.network-monitor")
     // Fail open: assume online until the first path update says otherwise,
     // so tools are never blocked before monitoring has produced a result.
     private var online = true

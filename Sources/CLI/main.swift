@@ -1,5 +1,5 @@
 //
-// TerrapinPilot
+// TerrapinCode
 // Copyright (C) 2026 Blue Turtle Corporation
 // Author: David Gill
 // main.swift
@@ -59,7 +59,7 @@ if let override = config.contextWindowOverride {
 }
 logger.debug("Using context window of: \(contextWindow)")
 if config.debugLog {
-    logger.debug("Debug logging enabled: LLM request bodies + Xcode MCP bridge calls -> ~/.terrapinpilot/logs/")
+    logger.debug("Debug logging enabled: LLM request bodies + Xcode MCP bridge calls -> ~/.terrapincode/logs/")
 }
 
 // 4. Wire up the agent

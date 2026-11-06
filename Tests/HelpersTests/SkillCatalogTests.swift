@@ -1,5 +1,5 @@
 //
-// TerrapinPilot
+// TerrapinCode
 // Copyright (C) 2026 Blue Turtle Corporation
 // Author: David Gill
 // SkillCatalogTests.swift
@@ -207,7 +207,7 @@ struct DiscoverTests {
         let user = TempDir()
         let bundled = TempDir()
         try writeSkill(
-            in: skillRoot(project, ".terrapinpilot/skills"),
+            in: skillRoot(project, ".terrapincode/skills"),
             name: "project-skill",
             description: "From the project."
         )
@@ -231,7 +231,7 @@ struct DiscoverTests {
         let user = TempDir()
         let bundled = TempDir()
         try writeSkill(
-            in: skillRoot(project, ".terrapinpilot/skills"),
+            in: skillRoot(project, ".terrapincode/skills"),
             name: "shared",
             description: "Project version."
         )
@@ -267,7 +267,7 @@ struct DiscoverTests {
     @Test func directoriesWithoutSkillFileAreSkipped() throws {
         let project = TempDir()
         let user = TempDir()
-        let root = try skillRoot(project, ".terrapinpilot/skills")
+        let root = try skillRoot(project, ".terrapincode/skills")
         try FileManager.default.createDirectory(
             at: root.appendingPathComponent("not-a-skill", isDirectory: true),
             withIntermediateDirectories: true
@@ -281,7 +281,7 @@ struct DiscoverTests {
     @Test func missingDescriptionIsSkipped() throws {
         let project = TempDir()
         let user = TempDir()
-        let root = try skillRoot(project, ".terrapinpilot/skills")
+        let root = try skillRoot(project, ".terrapincode/skills")
         let dir = root.appendingPathComponent("no-desc", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         try """
@@ -299,7 +299,7 @@ struct DiscoverTests {
     @Test func missingFrontmatterIsSkipped() throws {
         let project = TempDir()
         let user = TempDir()
-        let root = try skillRoot(project, ".terrapinpilot/skills")
+        let root = try skillRoot(project, ".terrapincode/skills")
         let dir = root.appendingPathComponent("no-fm", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         try "# Just markdown".write(
@@ -314,7 +314,7 @@ struct DiscoverTests {
         let project = TempDir()
         let user = TempDir()
         try writeSkill(
-            in: skillRoot(project, ".terrapinpilot/skills"),
+            in: skillRoot(project, ".terrapincode/skills"),
             name: "lowercase-file",
             description: "Lowercase file.",
             fileName: "skill.md"
@@ -327,7 +327,7 @@ struct DiscoverTests {
     @Test func frontmatterNameWinsOverDirectoryName() throws {
         let project = TempDir()
         let user = TempDir()
-        let root = try skillRoot(project, ".terrapinpilot/skills")
+        let root = try skillRoot(project, ".terrapincode/skills")
         let dir = root.appendingPathComponent("dir-name", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         try """
@@ -346,7 +346,7 @@ struct DiscoverTests {
     @Test func invalidNameFallsBackToDirectoryName() throws {
         let project = TempDir()
         let user = TempDir()
-        let root = try skillRoot(project, ".terrapinpilot/skills")
+        let root = try skillRoot(project, ".terrapincode/skills")
         let dir = root.appendingPathComponent("valid-dir", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         try """

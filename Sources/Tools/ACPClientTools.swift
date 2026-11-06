@@ -1,5 +1,5 @@
 //
-// TerrapinPilot
+// TerrapinCode
 // Copyright (C) 2026 Blue Turtle Corporation
 // Author: David Gill
 // ACPWrapperTools.swift
@@ -1294,7 +1294,7 @@ public final class ACPClientTools: ToolProvider, @unchecked Sendable {
         }
             
         // 2. Strip redundant workspace name prefix EVEN IF the file doesn't exist yet
-        let rootName = rootURL.lastPathComponent // "TerrapinPilot"
+        let rootName = rootURL.lastPathComponent // "TerrapinCode"
         var cleanRelative = expandedRaw
         if expandedRaw.hasPrefix("\(rootName)/") {
             cleanRelative = String(expandedRaw.dropFirst(rootName.count + 1)) // "SUMMARY.md"
@@ -1312,7 +1312,7 @@ public final class ACPClientTools: ToolProvider, @unchecked Sendable {
     }
     
     /// The inverse of resolveWorkspacePath: a workspace-relative path in the
-    /// form the Xcode MCP bridge expects (e.g. "TerrapinPilot/Sources/Foo.swift").
+    /// form the Xcode MCP bridge expects (e.g. "TerrapinCode/Sources/Foo.swift").
     private static func workspaceRelativePath(_ absolutePath: String, workspaceRoot: String) -> String {
         let root = URL(fileURLWithPath: (workspaceRoot as NSString).expandingTildeInPath).standardizedFileURL
         let abs = URL(fileURLWithPath: absolutePath).standardizedFileURL

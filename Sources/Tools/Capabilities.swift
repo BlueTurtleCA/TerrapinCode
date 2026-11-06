@@ -1,6 +1,6 @@
 //
 //  Capabilities.swift
-//  TerrapinPilot
+//  TerrapinCode
 //
 //  Created by Blue Turtle on 10/2/26.
 //

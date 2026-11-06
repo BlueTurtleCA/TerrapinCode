@@ -1,5 +1,5 @@
 //
-// TerrapinPilot
+// TerrapinCode
 // Copyright (C) 2026 Blue Turtle Corporation
 // Author: David Gill
 // WebTools.swift
@@ -22,7 +22,7 @@ public struct WebTools: ToolProvider {
         ToolDefinition(
             function: FunctionDefinition(
                 name: "web_fetch",
-                description: "Fetches and converts the text content of any HTTP/HTTPS URL into readable plain text. Content larger than ~30KB is saved to .terrapinpilot/web/ in the workspace and a preview is returned; use grep_file or read_file on the saved path to inspect the full content.",
+                description: "Fetches and converts the text content of any HTTP/HTTPS URL into readable plain text. Content larger than ~30KB is saved to .terrapincode/web/ in the workspace and a preview is returned; use grep_file or read_file on the saved path to inspect the full content.",
                 parameters: [
                     "type": AnySendable("object"),
                     "properties": AnySendable([
@@ -137,7 +137,7 @@ public struct WebTools: ToolProvider {
     // MARK: - Core Web Implementations
     
     /// Fetches HTML from a web page and strips tags/scripts into plain text.
-    /// Content larger than `inlineLimit` is saved under `.terrapinpilot/web/`
+    /// Content larger than `inlineLimit` is saved under `.terrapincode/web/`
     /// in the workspace and a pointer + preview is returned instead, so the
     /// model can grep_file/read_file the full content on demand.
     private static func fetchURL(_ urlString: String, cwd: String) async -> String {
@@ -182,7 +182,7 @@ public struct WebTools: ToolProvider {
         }
     }
     
-    /// Writes `text` to `.terrapinpilot/web/` in the workspace using a
+    /// Writes `text` to `.terrapincode/web/` in the workspace using a
     /// deterministic name derived from the URL, so re-fetching the same URL
     /// overwrites the same file. Returns the workspace-relative path.
     private static func saveToWorkspace(text: String, urlString: String, cwd: String) -> String? {

@@ -1,5 +1,5 @@
 //
-// TerrapinPilot
+// TerrapinCode
 // Copyright (C) 2026 Blue Turtle Corporation
 // Author: David Gill
 // ACPServer.swift
@@ -178,7 +178,7 @@ final class ACPServer: Sendable {
                     // clients (Android Studio) fail to deserialize.
                     "sessionCapabilities": ["delete": [:]],
                 ],
-                "agentInfo": ["name": "TerrapinPilot", "version": "1.0.0"],
+                "agentInfo": ["name": "TerrapinCode", "version": "1.0.0"],
                 "authMethods": [],
             ],
         ])

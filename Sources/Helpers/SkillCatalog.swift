@@ -1,5 +1,5 @@
 //
-// TerrapinPilot
+// TerrapinCode
 // Copyright (C) 2026 Blue Turtle Corporation
 // Author: David Gill
 // SkillCatalog.swift
@@ -63,8 +63,8 @@ public struct SkillCatalog: Sendable {
     /// Discovers skills for the working directory `cwd`.
     ///
     /// Precedence (highest first; the first definition of a name wins):
-    /// 1. Project:  `<cwd>/.terrapinpilot/skills`
-    /// 2. User:     `~/.terrapinpilot/skills`
+    /// 1. Project:  `<cwd>/.terrapincode/skills`
+    /// 2. User:     `~/.terrapincode/skills`
     /// 3. Extra:    `extraDirectories` (`--skills-dir` / `AI_SKILLS_DIR`)
     /// 4. Bundled:  `bundledSkillFiles` (skill files shipped with the binary)
     public static func discover(
@@ -76,7 +76,7 @@ public struct SkillCatalog: Sendable {
     ) -> SkillCatalog {
         var roots: [String] = []
         if !cwd.isEmpty {
-            roots.append((cwd as NSString).appendingPathComponent(".terrapinpilot/skills"))
+            roots.append((cwd as NSString).appendingPathComponent(".terrapincode/skills"))
         }
         roots.append(userDirectory.appendingPathComponent("skills").path)
         roots.append(contentsOf: extraDirectories)

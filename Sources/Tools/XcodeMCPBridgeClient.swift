@@ -1,5 +1,5 @@
 //
-// TerrapinPilot
+// TerrapinCode
 // Copyright (C) 2026 Blue Turtle Corporation
 // Author: David Gill
 // XcodeMCPBridgeClient.swift
@@ -26,7 +26,7 @@ public actor XcodeMCPBridgeClient: ToolProvider {
     // of failing tool calls in one turn does not fire a prompt per call.
     private var lastApprovalReopen: Date?
     // When true, every mcpbridge tool call (name, args, raw response) is
-    // appended to ~/.terrapinpilot/logs/mcp_bridge.log for inspection.
+    // appended to ~/.terrapincode/logs/mcp_bridge.log for inspection.
     private let debugLog: Bool
     
     /// True once `start()` has spawned the mcpbridge process.
@@ -162,7 +162,7 @@ public actor XcodeMCPBridgeClient: ToolProvider {
             "params": [
                 "protocolVersion": "2024-11-05",
                 "capabilities": [:],
-                "clientInfo": ["name": "TerrapinPilot", "version": "1.0.0"],
+                "clientInfo": ["name": "TerrapinCode", "version": "1.0.0"],
             ],
         ]
         _ = try? sendRPC(initRequest)
@@ -387,7 +387,7 @@ public actor XcodeMCPBridgeClient: ToolProvider {
         return lines.joined(separator: "\n")
     }
 
-    /// Appends a record for a bridge tool call to ~/.terrapinpilot/logs/
+    /// Appends a record for a bridge tool call to ~/.terrapincode/logs/
     /// mcp_bridge.log so the raw mcpbridge response for every Xcode MCP tool
     /// operation can be inspected. Only called when debugLog is enabled.
     private static func appendBridgeDebugLog(name: String, argsJSON: String, result: String) {

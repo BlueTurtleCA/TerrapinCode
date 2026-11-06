@@ -4,13 +4,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "TerrapinPilot",
+    name: "TerrapinCode",
     platforms: [
         .macOS(.v14)
     ],
     products: [
         .executable(
-            name: "terrapinpilot",
+            name: "terrapincode",
             targets: ["CLI"]
         )
     ],
